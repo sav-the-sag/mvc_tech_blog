@@ -34,3 +34,33 @@ router.get("/", async (req, res) => {
         res.status(500).json(err);
       }
     });
+
+// route set up to find single blog post and render blogPost page
+router.get("/blogPost/:id", withAuth, async (req, res) => {
+    try {
+      const blogPostData = await BlogPost.findByPk(req.params.id, {
+        // Join user data and comment data with blog post data
+        include: [
+          {
+            model: User,
+            attributes: ["name"],
+          },
+          {
+            model: Comment,
+            include: [User],
+          },
+        ],
+      });
+  
+      const blogPost = blogPostData.get({ plain: true });
+      console.log(blogPost);
+  
+      res.render("blogPost", {
+        ...blogPost,
+        logged_in: req.session.logged_in,
+      });
+    } catch (err) {
+      res.status(500).json(err);
+      res.redirect("/login");
+    }
+  });
