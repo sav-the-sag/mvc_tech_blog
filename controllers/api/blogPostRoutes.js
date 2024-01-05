@@ -18,3 +18,24 @@ router.post("/", withAuth, async (req, res) => {
       res.status(400).json(err);
     }
   });
+
+// route to edit an existing blog post
+router.put("/:id", withAuth, async (req, res) => {
+    console.log(req.body);
+    try {
+      const blogPostData = await BlogPost.update(req.body, {
+        where: {
+          id: req.params.id,
+        },
+      });
+  
+      if (!blogPostData) {
+        res.status(404).json({ message: "No blog post found with this id!" });
+        return;
+      }
+  
+      res.status(200).json(blogPostData);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  });
