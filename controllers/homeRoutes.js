@@ -64,3 +64,34 @@ router.get("/blogPost/:id", withAuth, async (req, res) => {
       res.redirect("/login");
     }
   });
+
+// route to allow logged in user access to the dashboard page
+// use withAuth middleware to prevent access to route
+router.get("/dashboard", withAuth, async (req, res) => {
+    try {
+      // find the logged in user based on the session ID
+      const userData = await User.findByPk(req.session.user_id, {
+        attributes: { exclude: ["password"] },
+        // join user blog post and comment data with user data
+        include: [
+          {
+            model: BlogPost,
+            include: [User],
+          },
+          {
+            model: Comment,
+          },
+        ],
+      });
+  
+      const user = userData.get({ plain: true });
+      console.log(user)
+  
+      res.render("dashboard", {
+        ...user,
+        logged_in: true,
+      });
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  });
