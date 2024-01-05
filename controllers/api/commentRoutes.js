@@ -39,3 +39,25 @@ router.get("/", async (req, res) => {
       res.status(500).json(err);
     }
   });
+
+// UPDATE Comment
+router.put("/:id", async (req, res) => {
+    try {
+      const updatedComment = await Comment.update(req.body, {
+        where: {
+          id: req.params.id,
+        },
+      });
+  
+      if (!updatedComment[0]) {
+        res.status(400).json({ message: "No comment found with that id!" });
+        return;
+      }
+  
+      console.log("Comment updated!");
+      res.status(200).json(updatedComment);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json(err);
+    }
+  });
