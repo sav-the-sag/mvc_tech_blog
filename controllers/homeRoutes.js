@@ -113,3 +113,52 @@ router.get("/create", async (req, res) => {
       res.status(500).json(err);
     }
   });
+
+// route set up to be able to edit an existing blog post
+router.get("/create/:id", async (req, res) => {
+    try {
+      const blogPostData = await BlogPost.findByPk(req.params.id, {
+        // join user data and comment data with blog post data
+        include: [
+          {
+            model: User,
+            attributes: ["name"],
+          },
+          {
+            model: Comment,
+            include: [User],
+          },
+        ],
+      });
+  
+      const blogPost = blogPostData.get({ plain: true });
+      console.log(blogPost);
+  
+      if (req.session.logged_in) {
+        res.render("edit", {
+          ...blogPost,
+          logged_in: req.session.logged_in,
+          userId: req.session.user_id,
+        });
+        return;
+      } else {
+        res.redirect("/login");
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
+  });
+  
+router.all("/login", (req, res) => {
+    // if the user is already logged in, redirect the request to another route
+    if (req.session.logged_in) {
+      res.redirect("/dashboard");
+      return;
+    }
+  
+    res.render("login");
+  });
+  
+  // Export
+  module.exports = router;
