@@ -17,3 +17,37 @@ router.post("/", async (req, res) => {
     res.status(400).json(err);
   }
 });
+
+// when user logs in as an existing user then this route validates user credentials and logs user in if a match is found in the database
+router.post("/login", async (req, res) => {
+    try {
+      const userData = await User.findOne({ where: { email: req.body.email } });
+  
+      if (!userData) {
+        console.log("no user found");
+        res
+          .status(400)
+          .json({ message: "Incorrect email or password, please try again" });
+        return;
+      }
+  
+      const validPassword = await userData.checkPassword(req.body.password);
+  
+      if (!validPassword) {
+        console.log("no password match");
+        res
+          .status(400)
+          .json({ message: "Incorrect email or password, please try again" });
+        return;
+      }
+  
+      req.session.save(() => {
+        req.session.user_id = userData.id;
+        req.session.logged_in = true;
+  
+        res.json({ user: userData, message: "You are now logged in!" });
+      });
+    } catch (err) {
+      res.status(400).json(err);
+    }
+  });
