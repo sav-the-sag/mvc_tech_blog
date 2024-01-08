@@ -28,4 +28,11 @@ async function newCommentHandler(event) {
         alert(response.statusText);
       }
     }
-  }
+  };
+
+// Event Listener
+console.log("HERE!");
+console.log(document.getElementById("comment-form"));
+document
+  .getElementById("comment-form")
+  .addEventListener("submit", newCommentHandler);
