@@ -1,0 +1,17 @@
+[
+    {
+      "name": "Harry Styles",
+      "email": "musicforasushirestaurant@hotmail.com",
+      "password": "password1"
+    },
+    {
+      "name": "Hozier",
+      "email": "ultimateirishman@gmail.com",
+      "password": "password12"
+    },
+    {
+      "name": "John Lennon",
+      "email": "imagine@aol.com",
+      "password": "password123"
+    }
+  ]
